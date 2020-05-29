@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import asyncComponent from './hoc/asyncComponent/asyncComponent';
+// import asyncComponent from './hoc/asyncComponent/asyncComponent';
 
 import Layout from './hoc/Layout/Layout';
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
@@ -11,21 +11,21 @@ import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
 import Logout from './containers/Auth/Logout/Logout';
 import * as actions from './store/actions/index';
 
-const asyncCheckout = asyncComponent(() => import('./containers/Checkout/Checkout'))
-const asyncAuth = asyncComponent(() => import('./containers/Auth/Auth'))
-const asyncOrders = asyncComponent(() => import('./containers/Orders/Orders'))
+// const asyncCheckout = asyncComponent(() => import('./containers/Checkout/Checkout'))
+// const asyncAuth = asyncComponent(() => import('./containers/Auth/Auth'))
+// const asyncOrders = asyncComponent(() => import('./containers/Orders/Orders'))
 
-// const LazyCheckout = React.lazy(() => {
-//   return import('./containers/Checkout/Checkout')
-// })
+const LazyCheckout = React.lazy(() => {
+  return import('./containers/Checkout/Checkout')
+})
 
-// const LazyAuth = React.lazy(() => {
-//   return import('./containers/Auth/Auth')
-// })
+const LazyAuth = React.lazy(() => {
+  return import('./containers/Auth/Auth')
+})
 
-// const LazyOrders = React.lazy(() => {
-//   return import('./containers/Auth/Auth')
-// })
+const LazyOrders = React.lazy(() => {
+  return import('./containers/Auth/Auth')
+})
 
 const App = props => {
   useEffect ( () => {
@@ -34,8 +34,8 @@ const App = props => {
 
   let routes = (
     <Switch>
-      {/* <Route path="/auth" render={() => <Suspense fallback={<div>Loading...</div>} ><LazyAuth /></Suspense>} /> */}
-      <Route path="/auth" component={asyncAuth} />
+      <Route path="/auth" render={() => <LazyAuth /> } />
+      {/* <Route path="/auth" component={asyncAuth} /> */}
       <Route path="/" exact component={BurgerBuilder} />
       <Redirect to="/" />
     </Switch>
@@ -44,13 +44,13 @@ const App = props => {
   if (props.isAuthenticated ) {
     routes = (
       <Switch>
-        <Route path="/checkout" component={asyncCheckout} />
-        {/* <Route path="/checkout" render={() => <Suspense fallback={<div>Loading...</div>} ><LazyCheckout /></Suspense>} /> */}
-        <Route path="/orders" component={asyncOrders} />
-        {/* <Route path="/orders" render={() => <Suspense fallback={<div>Loading...</div>} ><LazyOrders /></Suspense>} /> */}
+        {/* <Route path="/checkout" component={asyncCheckout} /> */}
+        <Route path="/checkout" render={() => <LazyCheckout />} />
+        {/* <Route path="/orders" component={asyncOrders} /> */}
+        <Route path="/orders" render={() => <LazyOrders />} />
         <Route path="/logout" component={Logout} />
-        <Route path="/auth" component={asyncAuth} />
-        {/* <Route path="/auth" render={() => <Suspense fallback={<div>Loading...</div>} ><LazyAuth /></Suspense>} /> */}
+        {/* <Route path="/auth" component={asyncAuth} /> */}
+        <Route path="/auth" render={() => <LazyAuth />} />
         <Route path="/" exact component={BurgerBuilder} />
         <Redirect to="/" />
       </Switch>
@@ -60,7 +60,7 @@ const App = props => {
   return (
     <div>
       <Layout>
-        {routes}
+        <Suspense fallback={<p>Loading...</p>} >{routes}</Suspense>
       </Layout>
     </div>
   );
