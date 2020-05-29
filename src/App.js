@@ -24,17 +24,17 @@ const LazyAuth = React.lazy(() => {
 })
 
 const LazyOrders = React.lazy(() => {
-  return import('./containers/Auth/Auth')
+  return import('./containers/Orders/Orders')
 })
 
-const App = props => {
+const app = props => {
   useEffect ( () => {
     props.onTryAutoSignup();
   }, [])
 
   let routes = (
     <Switch>
-      <Route path="/auth" render={() => <LazyAuth /> } />
+      <Route path="/auth" render={(props) => <LazyAuth {...props} /> } />
       {/* <Route path="/auth" component={asyncAuth} /> */}
       <Route path="/" exact component={BurgerBuilder} />
       <Redirect to="/" />
@@ -45,12 +45,12 @@ const App = props => {
     routes = (
       <Switch>
         {/* <Route path="/checkout" component={asyncCheckout} /> */}
-        <Route path="/checkout" render={() => <LazyCheckout />} />
+        <Route path="/checkout" render={(props) => <LazyCheckout {...props} />} />
         {/* <Route path="/orders" component={asyncOrders} /> */}
-        <Route path="/orders" render={() => <LazyOrders />} />
+        <Route path="/orders" render={(props) => <LazyOrders {...props} />} />
         <Route path="/logout" component={Logout} />
         {/* <Route path="/auth" component={asyncAuth} /> */}
-        <Route path="/auth" render={() => <LazyAuth />} />
+        <Route path="/auth" render={(props) => <LazyAuth {...props} />} />
         <Route path="/" exact component={BurgerBuilder} />
         <Redirect to="/" />
       </Switch>
@@ -78,4 +78,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter( connect( mapStateToProps, mapDispatchToProps )( App ) );
+export default withRouter( connect( mapStateToProps, mapDispatchToProps )( app ) );
